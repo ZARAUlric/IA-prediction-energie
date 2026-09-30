@@ -1,0 +1,24 @@
+paths:
+  raw: data/raw
+  processed: data/processed
+  models: models
+
+resample_freq: "1h"
+max_interp_gap_hours: 3
+lags: [1, 2, 3, 24, 48, 168]
+rolling_windows: [3, 6, 24]
+exog_lags: [1]            # capteurs/météo : uniquement la valeur de l'heure précédente
+split:
+  train_end: 0.70
+  val_end: 0.85
+cutoff_date: null         # ex: "2009-06-30" pour simuler des données partielles
+
+datasets:
+  household:
+    target: global_active_power
+    raw_file: household/household_power_consumption.txt
+    country: FR
+  appliances:
+    target: appliances
+    raw_file: appliances/energydata_complete.csv
+    country: BE
