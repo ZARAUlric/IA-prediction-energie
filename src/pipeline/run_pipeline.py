@@ -74,7 +74,7 @@ def split_and_save(name, df, cfg, out_dir):
 
 @flow(name="data-pipeline")
 def data_pipeline(datasets=None, config_path="configs/config.yaml",
-                  cutoff_date=None, out_dir=None):
+                  cutoff_date=None, out_dir=None, train_fn=None):
     cfg = load_config(config_path)
     names = datasets or list(cfg["datasets"])
     cutoff = cutoff_date or cfg.get("cutoff_date")
@@ -86,8 +86,8 @@ def data_pipeline(datasets=None, config_path="configs/config.yaml",
         available = restrict(name, cleaned, cutoff)
         feats = features(name, available, cfg)
         results[name] = split_and_save(name, feats, cfg, out_dir)
-        # Point d'accroche : ici, appeler l'entraînement des modèles (P2/P3)
-        # avec MLflow, une fois leurs fonctions prêtes.
+        if train_fn is not None and out_dir is None:
+            train_fn(name)          # fonction fournie par P2/P3, loggue dans MLflow
     return results
 
 

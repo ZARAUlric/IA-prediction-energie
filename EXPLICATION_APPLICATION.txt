@@ -1,0 +1,374 @@
+═══════════════════════════════════════════════════════════════════════════════
+           EXPLICATION DÉTAILLÉE DE L'APPLICATION DE PRÉDICTION ÉNERGÉTIQUE
+═══════════════════════════════════════════════════════════════════════════════
+
+TABLE DES MATIÈRES
+═══════════════════════════════════════════════════════════════════════════════
+1. INTRODUCTION GÉNÉRALE
+2. POURQUOI UNE APPLICATION D'IA ?
+3. LES DONNÉES UTILISÉES
+4. LE PIPELINE DE TRAITEMENT DES DONNÉES
+5. LE FEATURE ENGINEERING
+6. LES MODÈLES DE MACHINE LEARNING
+7. LES MÉTRIQUES D'ÉVALUATION
+8. L'API ET L'INTERFACE
+9. COMMENT UTILISER L'APPLICATION
+10. EXEMPLE DE PRÉDICTION PAS À PAS
+
+═══════════════════════════════════════════════════════════════════════════════
+1. INTRODUCTION GÉNÉRALE
+═══════════════════════════════════════════════════════════════════════════════
+
+Cette application est un système d'Intelligence Artificielle capable de prédire la 
+consommation énergétique d'une maison pour l'heure suivante.
+
+OBJECTIF PRINCIPAL :
+- Prédire la consommation électrique en kWh pour l'heure à venir
+- Aider à optimiser la consommation et réduire les coûts
+- Permettre une meilleure gestion énergétique
+
+DOMAINES D'APPLICATION :
+- Gestion intelligente des maisons (Smart Home)
+- Prévision pour les fournisseurs d'électricité
+- Optimisation des systèmes de stockage (batteries)
+- Détection d'anomalies de consommation
+
+═══════════════════════════════════════════════════════════════════════════════
+2. POURQUOI UNE APPLICATION D'IA ?
+═══════════════════════════════════════════════════════════════════════════════
+
+La consommation énergétique dépend de nombreux facteurs :
+- Heure de la journée (plus élevée le soir)
+- Jour de la semaine (différence semaine/week-end)
+- Saison (chauffage en hiver, climatisation en été)
+- Conditions météo
+- Habitudes des occupants
+- Appareils électroménagers en fonctionnement
+
+L'IA est capable de :
+✓ Apprendre les patterns de consommation
+✓ Détecter des corrélations complexes
+✓ S'adapter aux changements saisonniers
+✓ Fournir des prédictions précises
+
+CE QUI REND C'EST UNE APPLICATION D'IA :
+- Utilisation d'algorithmes de Machine Learning (XGBoost, Random Forest)
+- Apprentissage automatique à partir de données historiques
+- Capacité de généralisation à de nouvelles situations
+- Amélioration continue avec plus de données
+
+═══════════════════════════════════════════════════════════════════════════════
+3. LES DONNÉES UTILISÉES
+═══════════════════════════════════════════════════════════════════════════════
+
+L'application utilise deux datasets provenant du UCI Machine Learning Repository :
+
+DATASET 1 : HOUSEHOLD (Maison résidentielle en France)
+- Période : Décembre 2006 à Novembre 2010 (4 ans)
+- Fréquence : Mesures toutes les minutes
+- Résolution : Données agrégées par heure
+- Variables mesurées :
+  * global_active_power : Puissance active totale (kW)
+  * global_reactive_power : Puissance réactive totale (kVAR)
+  * voltage : Tension électrique (V)
+  * global_intensity : Intensité totale (A)
+  * sub_metering_1 : Cuisine (Wh)
+  * sub_metering_2 : Buanderie (Wh)
+  * sub_metering_3 : Chauffe-eau et climatiseur (Wh)
+
+DATASET 2 : APPLIANCES (Appareils en Belgique)
+- Période : 4.5 mois (Janvier à Mai 2016)
+- Fréquence : Mesures toutes les 10 minutes
+- Résolution : Données agrégées par heure
+- Variables mesurées :
+  * lights : Éclairage (Wh)
+  * T1, T2, ... : Températures dans différentes pièces
+  * RH_1, RH_2, ... : Humidité relative
+  * appliances : Consommation totale des appareils (Wh)
+
+SÉPARATION DES DONNÉES :
+- Train : 70% des données (pour l'entraînement)
+- Validation : 15% (pour ajuster les hyperparamètres)
+- Test : 15% (pour évaluer la performance finale)
+
+IMPORTANT : La séparation est temporelle (pas aléatoire) pour éviter la fuite
+de données du futur vers le passé.
+
+═══════════════════════════════════════════════════════════════════════════════
+4. LE PIPELINE DE TRAITEMENT DES DONNÉES
+═══════════════════════════════════════════════════════════════════════════════
+
+ÉTAPE 1 : TÉLÉCHARGEMENT
+- Récupération des datasets depuis UCI Repository
+- Extraction des fichiers compressés
+- Stockage dans data/raw/
+
+ÉTAPE 2 : NETTOYAGE
+- Suppression des valeurs impossibles (puissance négative)
+- Rééchantillonnage minute → heure (moyenne)
+- Interpolation des trous courts (< 3 heures)
+- Suppression des périodes avec trop de données manquantes
+- Calcul de la consommation résiduelle (sub_metering_rest)
+
+ÉTAPE 3 : FEATURE ENGINEERING
+- Création de variables calendaires (heure, jour, mois)
+- Encodage cyclique (sin/cos) pour les périodicités
+- Ajout de lags (valeurs passées : 1h, 2h, 3h, 24h, 48h, 168h)
+- Calcul de statistiques glissantes (moyenne, écart-type)
+- Décalage des variables exogènes de 1h (anti-fuite)
+
+ÉTAPE 4 : DÉCOUPAGE
+- Séparation temporelle 70/15/15
+- Normalisation des données (StandardScaler)
+- Sauvegarde des splits et des scalers
+
+═══════════════════════════════════════════════════════════════════════════════
+5. LE FEATURE ENGINEERING
+═══════════════════════════════════════════════════════════════════════════════
+
+Les features sont les variables d'entrée utilisées par le modèle pour prédire.
+
+FEATURES CALENDAIRES :
+- hour : Heure de la journée (0-23)
+- dayofweek : Jour de la semaine (0=Lundi, 6=Dimanche)
+- month : Mois de l'année (1-12)
+- is_weekend : 1 si week-end, 0 sinon
+- is_holiday : 1 si jour férié, 0 sinon
+
+ENCODAGE CYCLIQUE (sin/cos) :
+Pour représenter les périodicités de manière continue :
+- hour_sin = sin(2π × hour / 24)
+- hour_cos = cos(2π × hour / 24)
+- month_sin = sin(2π × month / 12)
+- month_cos = cos(2π × month / 12)
+
+Cela permet au modèle de comprendre que 23h et 0h sont proches.
+
+LAGS (VALEURS PASSÉES) :
+- global_active_power_lag_1 : Consommation il y a 1 heure
+- global_active_power_lag_2 : Consommation il y a 2 heures
+- global_active_power_lag_24 : Consommation il y a 24 heures (même heure hier)
+- global_active_power_lag_168 : Consommation il y a 168 heures (même heure la semaine dernière)
+
+STATISTIQUES GLISSANTES :
+- rollmean_3 : Moyenne des 3 dernières heures
+- rollstd_3 : Écart-type des 3 dernières heures
+- rollmean_24 : Moyenne des 24 dernières heures
+- rollstd_24 : Écart-type des 24 dernières heures
+
+TOTAL : 30 features pour le dataset household
+
+═══════════════════════════════════════════════════════════════════════════════
+6. LES MODÈLES DE MACHINE LEARNING
+═══════════════════════════════════════════════════════════════════════════════
+
+L'application teste plusieurs modèles pour choisir le meilleur :
+
+BASELINES (RÉFÉRENCES) :
+- Mean : Prédit la moyenne de la consommation sur le train
+- Persistence : Prédit la dernière valeur connue (lag 1)
+- Rolling Mean : Prédit la moyenne glissante sur 24h
+
+XGBOOST (EXTREME GRADIENT BOOSTING) ⭐ MEILLEUR MODÈLE
+- Algorithme de boosting basé sur des arbres de décision
+- Construit séquentiellement des arbres qui corrigent les erreurs précédentes
+- Très performant sur les données tabulaires
+- Hyperparamètres optimisés :
+  * n_estimators : 100 arbres
+  * max_depth : 6 niveaux maximum par arbre
+  * learning_rate : 0.1 (vitesse d'apprentissage)
+  * subsample : 0.8 (fraction d'échantillons par arbre)
+
+RANDOM FOREST
+- Ensemble d'arbres de décision indépendants
+- Moyenne des prédictions de tous les arbres
+- Robuste au surapprentissage
+- Hyperparamètres :
+  * n_estimators : 100 arbres
+  * max_depth : 10 niveaux
+  * min_samples_split : 2 échantillons minimum pour diviser
+
+PROPHET (DÉSACTIVÉ - INCOMPATIBILITÉ NUMPY)
+- Modèle Facebook pour les séries temporelles
+- Décompose la série en tendance + saisonnalités
+- Gère automatiquement les effets de jours fériés
+
+LSTM (LONG SHORT-TERM MEMORY)
+- Réseau de neurones récurrent pour les séries temporelles
+- Capable de mémoriser des dépendances à long terme
+- Architecture PyTorch avec early stopping
+
+═══════════════════════════════════════════════════════════════════════════════
+7. LES MÉTRIQUES D'ÉVALUATION
+═══════════════════════════════════════════════════════════════════════════════
+
+Pour évaluer la performance des modèles, nous utilisons 3 métriques :
+
+MAE (MEAN ABSOLUTE ERROR)
+- Formule : MAE = (1/n) × Σ|y_true - y_pred|
+- Unité : kW (même unité que la cible)
+- Interprétation : Erreur moyenne en kW
+- Avantage : Facile à interpréter
+- Résultat XGBoost Household : 0.3061 kW (306 Watts)
+
+RMSE (ROOT MEAN SQUARED ERROR)
+- Formule : RMSE = √[(1/n) × Σ(y_true - y_pred)²]
+- Unité : kW
+- Interprétation : Pénalise plus les grandes erreurs
+- Avantage : Sensible aux outliers
+- Résultat XGBoost Household : 0.4499 kW
+
+MAPE (MEAN ABSOLUTE PERCENTAGE ERROR)
+- Formule : MAPE = (100/n) × Σ|(y_true - y_pred) / y_true|
+- Unité : Pourcentage (%)
+- Interprétation : Erreur moyenne en pourcentage
+- Avantage : Indépendant de l'échelle
+- Résultat XGBoost Household : 38.81%
+
+COMPARAISON DES MODÈLES (HOUSEHOLD) :
+┌─────────────────┬──────────┬──────────┬──────────┐
+│ Modèle          │ MAE (kW) │ RMSE (kW)│ MAPE (%) │
+├─────────────────┼──────────┼──────────┼──────────┤
+│ XGBoost ⭐      │ 0.3061   │ 0.4499   │ 38.81    │
+│ Random Forest   │ 0.3116   │ 0.4572   │ 39.75    │
+│ Persistence     │ 0.3880   │ 0.5867   │ 46.58    │
+│ Rolling Mean    │ 0.5354   │ 0.6804   │ 83.56    │
+│ Mean            │ 0.6129   │ 0.7201   │ 111.44   │
+└─────────────────┴──────────┴──────────┴──────────┘
+
+XGBoost est 21% meilleur que la baseline persistence.
+
+═══════════════════════════════════════════════════════════════════════════════
+8. L'API ET L'INTERFACE
+═══════════════════════════════════════════════════════════════════════════════
+
+API FASTAPI (Backend)
+- Port : 8000
+- Documentation : http://localhost:8000/docs
+- Endpoints principaux :
+  * GET /datasets : Liste des datasets disponibles
+  * GET /datasets/{name}/info : Informations sur un dataset
+  * POST /model/load : Charger un modèle en mémoire
+  * POST /predict : Faire une prédiction
+
+INTERFACE GRADIO (Frontend)
+- Port : 7860
+- URL : http://localhost:7860
+- Onglets disponibles :
+  1. Vue d'ensemble : Informations sur les datasets
+  2. Exploration des données : Visualisation des données brutes
+  3. Features : Liste des variables explicatives
+  4. Prédiction : Formulaire interactif pour prédire
+  5. Comparaison des modèles : Tableau des performances
+  6. API Status : Vérifier l'état de l'API
+
+═══════════════════════════════════════════════════════════════════════════════
+9. COMMENT UTILISER L'APPLICATION
+═══════════════════════════════════════════════════════════════════════════════
+
+ÉTAPE 1 : LANCER L'API
+- Ouvrir un terminal
+- Activer l'environnement virtuel : .venv\Scripts\Activate.ps1
+- Lancer : python -m src.api.main
+- L'API est accessible sur http://localhost:8000
+
+ÉTAPE 2 : LANCER L'INTERFACE GRADIO
+- Ouvrir un autre terminal
+- Aller dans le dossier front : cd front
+- Lancer : python app.py
+- L'interface est accessible sur http://localhost:7860
+
+ÉTAPE 3 : FAIRE UNE PRÉDICTION
+1. Ouvrir l'interface Gradio dans le navigateur
+2. Cliquer sur l'onglet "🤖 Prédiction"
+3. Sélectionner le dataset (household ou appliances)
+4. Sélectionner le modèle (xgboost ou random_forest)
+5. Cliquer sur "📥 Charger modèle"
+6. Remplir le formulaire avec les valeurs actuelles :
+   - Heure (0-23)
+   - Jour de la semaine (0-6)
+   - Mois (1-12)
+   - Week-end (0 ou 1)
+   - Consommation lag 1h (kW)
+   - Puissance réactive lag 1h (kVAR)
+   - Tension lag 1h (V)
+   - Intensité lag 1h (A)
+7. Cliquer sur "🔮 Prédire"
+8. Voir le résultat en kW et Watts
+
+═══════════════════════════════════════════════════════════════════════════════
+10. EXEMPLE DE PRÉDICTION PAS À PAS
+═══════════════════════════════════════════════════════════════════════════════
+
+SCÉNARIO : Samedi 20 décembre à 20h (soirée week-end d'hiver)
+
+DONNÉES D'ENTRÉE :
+- Heure : 20
+- Jour de la semaine : 5 (Samedi)
+- Mois : 12 (Décembre)
+- Week-end : 1 (Oui)
+- Consommation lag 1h : 1.2 kW (1200 Watts il y a 1h)
+- Puissance réactive lag 1h : 0.2 kVAR
+- Tension lag 1h : 230 V
+- Intensité lag 1h : 5.2 A
+
+TRAITEMENT PAR LE MODÈLE :
+1. Encodage cyclique des variables temporelles :
+   - hour_sin = sin(2π × 20 / 24) = -0.866
+   - hour_cos = cos(2π × 20 / 24) = 0.5
+   - month_sin = sin(2π × 12 / 12) = 0
+   - month_cos = cos(2π × 12 / 12) = 1
+
+2. Complétion des features manquants (lags, rolling stats) :
+   - Les lags 2, 3, 24, 48, 168 sont estimés à partir du lag 1
+   - Les statistiques glissantes sont calculées
+
+3. Prédiction par XGBoost :
+   - Le modèle utilise les 30 features
+   - Il applique les règles apprises pendant l'entraînement
+   - Il combine les contributions de chaque feature
+
+RÉSULTAT :
+- Prédiction : 1.4938 kW
+- En Watts : 1494 Watts
+- Interprétation : Le modèle prédit que la maison consommera 
+  environ 1.49 kWh pendant l'heure suivante (20h à 21h)
+
+POURQUOI CE RÉSULTAT ?
+- C'est un samedi soir (consommation élevée)
+- C'est en décembre (chauffage potentiel)
+- La consommation passée était déjà élevée (1.2 kW)
+- Le modèle a appris que ce type de situation correspond à une
+  consommation d'environ 1.5 kW
+
+═══════════════════════════════════════════════════════════════════════════════
+CONCLUSION
+═══════════════════════════════════════════════════════════════════════════════
+
+Cette application d' Intelligence Artificielle permet de prédire avec une 
+précision de ~306 Watts d'erreur moyenne la consommation énergétique d'une 
+maison pour l'heure suivante.
+
+POINTS FORTS :
+✓ Précision élevée (MAE de 0.306 kW)
+✓ Interface utilisateur intuitive
+✓ Plusieurs modèles testés et comparés
+✓ Pipeline de données complet et robuste
+✓ Monitoring de dérive intégré
+✓ Architecture MLOps pour la production
+
+LIMITATIONS :
+✓ Dépend de la qualité des données historiques
+✓ Nécessite des données récentes pour les lags
+✓ Performance peut varier selon les saisons
+✓ Prophet désactivé (incompatibilité NumPy)
+
+PERSPECTS D'AVENIR :
+✓ Intégration de données météo
+✓ Prédictions à plus long terme (24h, 7 jours)
+✓ Détection d'anomalies en temps réel
+✓ Recommandations d'optimisation énergétique
+
+═══════════════════════════════════════════════════════════════════════════════
+FIN DU DOCUMENT
+═══════════════════════════════════════════════════════════════════════════════

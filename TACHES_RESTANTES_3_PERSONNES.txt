@@ -1,0 +1,304 @@
+═══════════════════════════════════════════════════════════════════════════════
+PERSONNE 2 : AMÉLIORATION DES MODÈLES ET ALGORITHMES
+═══════════════════════════════════════════════════════════════════════════════
+
+OBJECTIF : Améliorer la précision des modèles et ajouter de nouveaux algorithmes
+
+TÂCHE 1.1 : RÉPARER PROPHET (PRIORITÉ HAUTE)
+- Problème : Prophet est désactivé à cause de l'incompatibilité NumPy 2.x
+- Solution : Downgrader NumPy à 1.24.x OU mettre à jour Prophet à 2.0+
+- Actions :
+  * Tester : pip install "numpy<2.0"
+  * OU : pip install prophet --upgrade
+  * Réactiver l'import dans src/models/train.py
+  * Tester l'entraînement Prophet sur household
+  * Comparer avec XGBoost
+
+TÂCHE 1.2 : TESTER LSTM (PRIORITÉ MOYENNE)
+- LSTM est implémenté mais n'a pas été testé
+- Actions :
+  * Tester l'entraînement LSTM sur household
+  * Ajuster les hyperparamètres (learning rate, batch size, epochs)
+  * Comparer les résultats avec XGBoost
+  * Documenter les performances
+
+TÂCHE 1.3 : AJOUTER DE NOUVEAUX MODÈLES (PRIORITÉ MOYENNE)
+- LightGBM : Alternative à XGBoost, souvent plus rapide
+- CatBoost : Très performant sur les données catégorielles
+- ARIMA/Prophet : Pour les séries temporelles classiques
+- Actions :
+  * Implémenter LightGBM (src/models/lightgbm_model.py)
+  * Implémenter CatBoost (src/models/catboost_model.py)
+  * Ajouter au MODELS dict dans train.py
+  * Tester et comparer
+
+TÂCHE 1.4 : OPTIMISATION DES HYPERPARAMÈTRES (PRIORITÉ BASSE)
+- Utiliser Optuna ou Hyperopt pour l'optimisation automatique
+- Actions :
+  * Installer Optuna : pip install optuna
+  * Créer un script d'optimisation (src/models/optimize.py)
+  * Optimiser XGBoost, Random Forest, LightGBM
+  * Sauvegarder les meilleurs hyperparamètres
+
+TÂCHE 1.5 : ENSEMBLE LEARNING (PRIORITÉ BASSE)
+- Combiner plusieurs modèles pour améliorer la précision
+- Actions :
+  * Implémenter un VotingRegressor (moyenne des prédictions)
+  * Implémenter un StackingRegressor (méta-modèle)
+  * Tester sur household et appliances
+  * Comparer avec le meilleur modèle individuel
+
+LIVRABLES ATTENDUS :
+- Prophet fonctionnel et testé
+- LSTM testé avec résultats
+- 2 nouveaux modèles implémentés (LightGBM, CatBoost)
+- Script d'optimisation des hyperparamètres
+- Rapport comparatif des modèles améliorés
+
+═══════════════════════════════════════════════════════════════════════════════
+PERSONNE 2 : AMÉLIORATION DE L'INTERFACE ET DE L'EXPÉRIENCE UTILISATEUR
+═══════════════════════════════════════════════════════════════════════════════
+
+OBJECTIF : Rendre l'application plus intuitive et ajouter des fonctionnalités UX
+
+TÂCHE 2.1 : AMÉLIORER LE FORMULAIRE DE PRÉDICTION (PRIORITÉ HAUTE)
+- Actuellement : Formulaire simplifié avec 8 champs
+- Améliorations :
+  * Ajouter tous les 30 features dans un formulaire accordéon
+  * Ajouter des tooltips explicatifs pour chaque champ
+  * Ajouter des valeurs par défaut intelligentes (basées sur l'historique)
+  * Ajouter un bouton "Générer valeurs aléatoires réalistes"
+- Actions :
+  * Modifier front/app.py pour ajouter les champs manquants
+  * Ajouter des descriptions pour chaque feature
+  * Tester l'interface avec différents scénarios
+
+TÂCHE 2.2 : AJOUTER DES GRAPHIQUES DE PRÉDICTION (PRIORITÉ HAUTE)
+- Actuellement : Seulement la valeur numérique
+- Améliorations :
+  * Graphique de la consommation passée (24h)
+  * Graphique de la prédiction future (1h)
+  * Comparaison avec la baseline persistence
+  * Indicateur de confiance (intervalle de confiance)
+- Actions :
+  * Utiliser Plotly pour les graphiques
+  * Récupérer l'historique via l'API
+  * Afficher la prédiction sur le graphique
+  * Ajouter un intervalle de confiance (± 2 × RMSE)
+
+TÂCHE 2.3 : AJOUTER UN HISTORIQUE DES PRÉDICTIONS (PRIORITÉ MOYENNE)
+- Sauvegarder les prédictions dans une base de données locale
+- Permettre de voir l'historique des prédictions
+- Comparer les prédictions avec les valeurs réelles (si disponibles)
+- Actions :
+  * Créer une base SQLite (predictions.db)
+  * Sauvegarder chaque prédiction avec timestamp
+  * Ajouter un onglet "Historique" dans Gradio
+  * Graphique de l'évolution des prédictions
+
+TÂCHE 2.4 : AMÉLIORER L'ONGLET COMPARAISON (PRIORITÉ MOYENNE)
+- Actuellement : Tableau simple
+- Améliorations :
+  * Graphique à barres comparatif des MAE/RMSE/MAPE
+  * Graphique radar des performances
+  * Possibilité de filtrer par métrique
+  * Export en PDF du rapport
+- Actions :
+  * Créer des graphiques Plotly pour la comparaison
+  * Ajouter des filtres interactifs
+  * Implémenter l'export PDF (reportlab)
+
+TÂCHE 2.5 : AJOUTER UN MODE "BATCH PREDICTION" (PRIORITÉ BASSE)
+- Permettre de charger un fichier CSV avec plusieurs lignes
+- Faire des prédictions en lot
+- Exporter les résultats en CSV
+- Actions :
+  * Ajouter un upload de fichier dans Gradio
+  * Créer un endpoint /predict/batch dans l'API
+  * Traiter les prédictions en lot
+  * Générer un fichier CSV de résultats
+
+TÂCHE 2.6 : LOCALISATION (PRIORITÉ BASSE)
+- Traduire l'interface en anglais et français
+- Actions :
+  * Créer un fichier de traduction (i18n)
+  * Ajouter un sélecteur de langue
+  * Traduire tous les textes de l'interface
+
+LIVRABLES ATTENDUS :
+- Formulaire de prédiction complet avec 30 features
+- Graphiques de prédiction interactifs
+- Historique des prédictions avec base de données
+- Onglet comparaison amélioré avec graphiques
+- Mode batch prediction fonctionnel
+- Interface bilingue (FR/EN)
+
+═══════════════════════════════════════════════════════════════════════════════
+PERSONNE 3 : DÉPLOIEMENT, MONITORING ET EXTENSIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+OBJECTIF : Préparer le déploiement en production et ajouter des fonctionnalités avancées
+
+TÂCHE 3.1 : DÉPLOIEMENT DOCKER (PRIORITÉ HAUTE)
+- Actuellement : Dockerfile et docker-compose.yml existent mais non testés
+- Actions :
+  * Tester le build Docker : docker build -t energy-prediction .
+  * Tester docker-compose up -d
+  * Vérifier que tous les services fonctionnent (API, Front, MLflow)
+  * Corriger les éventuels problèmes de ports ou de volumes
+  * Documenter le déploiement
+
+TÂCHE 3.2 : INTÉGRER MLFLOW COMPLÈTEMENT (PRIORITÉ HAUTE)
+- Actuellement : MLflow est partiellement intégré
+- Actions :
+  * Lancer MLflow UI : mlflow ui
+  * Vérifier que les runs sont bien trackés
+  * Créer un Model Registry pour versionner les modèles
+  * Mettre en place le staging (Staging → Production)
+  * Documenter l'utilisation de MLflow
+
+TÂCHE 3.3 : AJOUTER DES DONNÉES MÉTÉO (PRIORITÉ MOYENNE)
+- La consommation dépend de la météo (température, humidité)
+- Actions :
+  * Trouver une API météo gratuite (OpenWeatherMap, WeatherAPI)
+  * Créer un script pour télécharger les données météo historiques
+  * Intégrer les données météo dans le pipeline
+  * Ajouter les features météo (température, humidité, vent)
+  * Réentraîner les modèles avec les nouvelles features
+  * Comparer les performances
+
+TÂCHE 3.4 : PRÉDICTIONS À PLUS LONG TERME (PRIORITÉ MOYENNE)
+- Actuellement : Prédiction à 1 heure
+- Objectif : Prédire à 24h, 7 jours
+- Actions :
+  * Implémenter une approche récursive (prédire t+1, puis t+2, etc.)
+  * OU implémenter un modèle multi-step (LSTM multi-output)
+  * Créer un endpoint /predict/horizon
+  * Ajouter un sélecteur d'horizon dans l'interface
+  * Tester la précision sur différents horizons
+
+TÂCHE 3.5 : DÉTECTION D'ANOMALIES (PRIORITÉ MOYENNE)
+- Détecter les consommations anormales (fuites, appareils défectueux)
+- Actions :
+  * Implémenter un algorithme de détection d'anomalies (Isolation Forest, Autoencoder)
+  * Créer un endpoint /anomalies/detect
+  * Ajouter un onglet "Anomalies" dans Gradio
+  * Tester sur des données synthétiques avec anomalies
+
+TÂCHE 3.6 : MONITORING EN TEMPS RÉEL (PRIORITÉ BASSE)
+- Actuellement : Monitoring de dérive statique
+- Améliorations :
+  * Dashboard Grafana pour visualiser les métriques
+  * Alertes automatiques si dérive détectée
+  * Monitoring des performances du modèle en production
+- Actions :
+  * Installer Prometheus et Grafana
+  * Configurer les métriques à surveiller
+  * Créer des dashboards
+  * Mettre en place des alertes (email, Slack)
+
+TÂCHE 3.7 : CI/CD (PRIORITÉ BASSE)
+- Automatiser le build et le déploiement
+- Actions :
+  * Créer un fichier GitHub Actions (.github/workflows/ci.yml)
+  * Automatiser les tests à chaque commit
+  * Automatiser le build Docker
+  * Automatiser le déploiement sur un serveur
+
+TÂCHE 3.8 : DOCUMENTATION TECHNIQUE (PRIORITÉ BASSE)
+- Créer une documentation technique complète
+- Actions :
+  * Utiliser Sphinx ou MkDocs
+  * Documenter l'architecture du système
+  * Documenter l'API (OpenAPI/Swagger)
+  * Documenter le pipeline de données
+  * Ajouter des exemples d'utilisation
+
+LIVRABLES ATTENDUS :
+- Docker fonctionnel et documenté
+- MLflow complètement intégré avec Model Registry
+- Données météo intégrées et modèles réentraînés
+- Prédictions multi-horizons (24h, 7 jours)
+- Système de détection d'anomalies
+- Dashboard de monitoring (Grafana)
+- Pipeline CI/CD automatisé
+- Documentation technique complète
+
+═══════════════════════════════════════════════════════════════════════════════
+RÉCAPITULATIF PAR PRIORITÉ
+═══════════════════════════════════════════════════════════════════════════════
+
+PRIORITÉ HAUTE (À FAIRE EN PREMIER) :
+- Personne 1 : Réparer Prophet
+- Personne 2 : Améliorer le formulaire de prédiction
+- Personne 2 : Ajouter des graphiques de prédiction
+- Personne 3 : Déploiement Docker
+- Personne 3 : Intégrer MLflow complètement
+
+PRIORITÉ MOYENNE :
+- Personne 1 : Tester LSTM
+- Personne 1 : Ajouter LightGBM et CatBoost
+- Personne 2 : Ajouter un historique des prédictions
+- Personne 2 : Améliorer l'onglet comparaison
+- Personne 3 : Ajouter des données météo
+- Personne 3 : Prédictions à plus long terme
+- Personne 3 : Détection d'anomalies
+
+PRIORITÉ BASSE (OPTIONNEL) :
+- Personne 1 : Optimisation des hyperparamètres
+- Personne 1 : Ensemble learning
+- Personne 2 : Mode batch prediction
+- Personne 2 : Localisation
+- Personne 3 : Monitoring temps réel (Grafana)
+- Personne 3 : CI/CD
+- Personne 3 : Documentation technique
+
+═══════════════════════════════════════════════════════════════════════════════
+ESTIMATION DU TEMPS
+═══════════════════════════════════════════════════════════════════════════════
+
+Personne 1 (Modèles) :
+- Priorité haute : 4-6 heures
+- Priorité moyenne : 8-12 heures
+- Priorité basse : 6-8 heures
+- Total estimé : 18-26 heures
+
+Personne 2 (Interface) :
+- Priorité haute : 8-10 heures
+- Priorité moyenne : 6-8 heures
+- Priorité basse : 4-6 heures
+- Total estimé : 18-24 heures
+
+Personne 3 (Déploiement) :
+- Priorité haute : 6-8 heures
+- Priorité moyenne : 10-14 heures
+- Priorité basse : 8-12 heures
+- Total estimé : 24-34 heures
+
+═══════════════════════════════════════════════════════════════════════════════
+CONSEILS POUR LA COLLABORATION
+═══════════════════════════════════════════════════════════════════════════════
+
+1. UTILISER GIT POUR LA COLLABORATION
+   - Créer une branche par personne : git checkout -b feature/personne1
+   - Faire des pull requests pour fusionner
+   - Résoudre les conflits ensemble
+
+2. COMMUNICATION RÉGULIÈRE
+   - Réunions hebdomadaires pour synchroniser
+   - Partager les progrès sur un canal Slack/Discord
+   - Documenter les décisions techniques
+
+3. TESTS CONTINUS
+   - Chaque personne teste ses modifications
+   - Ne pas casser le code existant
+   - Faire des revues de code entre pairs
+
+4. PRIORITÉS
+   - Commencer par les tâches haute priorité
+   - Valider que le projet fonctionne toujours après chaque modification
+   - Documenter les problèmes rencontrés
+
+═══════════════════════════════════════════════════════════════════════════════
+FIN DU DOCUMENT
+═══════════════════════════════════════════════════════════════════════════════

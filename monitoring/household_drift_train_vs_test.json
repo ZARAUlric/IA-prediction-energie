@@ -1,0 +1,215 @@
+{
+  "features": {
+    "global_reactive_power_lag_1": {
+      "psi": 0.08301871484727488,
+      "psi_drift": 0,
+      "ks_statistic": 0.13549334845587785,
+      "ks_p_value": 3.2013436821186124e-66,
+      "ks_drift": 1
+    },
+    "voltage_lag_1": {
+      "psi": 0.10903217721957946,
+      "psi_drift": 0,
+      "ks_statistic": 0.11413022375580889,
+      "ks_p_value": 4.660115346281981e-47,
+      "ks_drift": 1
+    },
+    "global_intensity_lag_1": {
+      "psi": 0.06528518212344121,
+      "psi_drift": 0,
+      "ks_statistic": 0.11297517938561187,
+      "ks_p_value": 4.0725270800995985e-46,
+      "ks_drift": 1
+    },
+    "sub_metering_1_lag_1": {
+      "psi": 0.010304439157716736,
+      "psi_drift": 0,
+      "ks_statistic": 0.023768295203972056,
+      "ks_p_value": 0.01899874064773432,
+      "ks_drift": 1
+    },
+    "sub_metering_2_lag_1": {
+      "psi": 0.017477117464805573,
+      "psi_drift": 0,
+      "ks_statistic": 0.12670268008381735,
+      "ks_p_value": 6.214449269636286e-58,
+      "ks_drift": 1
+    },
+    "sub_metering_3_lag_1": {
+      "psi": 0.07744030454313926,
+      "psi_drift": 0,
+      "ks_statistic": 0.2964372430631632,
+      "ks_p_value": 2.1195e-320,
+      "ks_drift": 1
+    },
+    "sub_metering_rest_lag_1": {
+      "psi": 0.12008576648037851,
+      "psi_drift": 0,
+      "ks_statistic": 0.07702419069985911,
+      "ks_p_value": 1.2247940117596483e-21,
+      "ks_drift": 1
+    },
+    "hour": {
+      "psi": 1.2669077878991269e-05,
+      "psi_drift": 0,
+      "ks_statistic": 0.0009835111470312685,
+      "ks_p_value": 1.0,
+      "ks_drift": 0
+    },
+    "dayofweek": {
+      "psi": 0.0004572236651294956,
+      "psi_drift": 0,
+      "ks_statistic": 0.0087978809365028,
+      "ks_p_value": 0.9054174583082458,
+      "ks_drift": 0
+    },
+    "month": {
+      "psi": 2.1980831529282776,
+      "psi_drift": 1,
+      "ks_statistic": 0.2795015040825096,
+      "ks_p_value": 3.174026516305076e-284,
+      "ks_drift": 1
+    },
+    "is_weekend": {
+      "psi": 0.00038659436970435603,
+      "psi_drift": 0,
+      "ks_statistic": 0.0087978809365028,
+      "ks_p_value": 0.9054174583082458,
+      "ks_drift": 0
+    },
+    "is_holiday": {
+      "psi": 0.0032930524900246752,
+      "psi_drift": 0,
+      "ks_statistic": 0.010266322864889155,
+      "ks_p_value": 0.7755653644704024,
+      "ks_drift": 0
+    },
+    "hour_sin": {
+      "psi": 1.918294657279667e-06,
+      "psi_drift": 0,
+      "ks_statistic": 0.0003868071597240008,
+      "ks_p_value": 1.0,
+      "ks_drift": 0
+    },
+    "hour_cos": {
+      "psi": 1.0588053234696146e-05,
+      "psi_drift": 0,
+      "ks_statistic": 0.0015229454768904693,
+      "ks_p_value": 1.0,
+      "ks_drift": 0
+    },
+    "month_sin": {
+      "psi": 0.826207111158601,
+      "psi_drift": 1,
+      "ks_statistic": 0.23357808945286107,
+      "ks_p_value": 1.5309387713571577e-197,
+      "ks_drift": 1
+    },
+    "month_cos": {
+      "psi": 0.8367866519056667,
+      "psi_drift": 1,
+      "ks_statistic": 0.221559234068742,
+      "ks_p_value": 1.4807218285560333e-177,
+      "ks_drift": 1
+    },
+    "dow_sin": {
+      "psi": 0.0004413815670437065,
+      "psi_drift": 0,
+      "ks_statistic": 0.0087978809365028,
+      "ks_p_value": 0.9054174583082458,
+      "ks_drift": 0
+    },
+    "dow_cos": {
+      "psi": 0.00023067777593709175,
+      "psi_drift": 0,
+      "ks_statistic": 0.005524255630173447,
+      "ks_p_value": 0.9995703597096307,
+      "ks_drift": 0
+    },
+    "global_active_power_lag_1": {
+      "psi": 0.07084482385759679,
+      "psi_drift": 0,
+      "ks_statistic": 0.11337415397782406,
+      "ks_p_value": 1.9308914398574557e-46,
+      "ks_drift": 1
+    },
+    "global_active_power_lag_2": {
+      "psi": 0.07096328958073247,
+      "psi_drift": 0,
+      "ks_statistic": 0.11357467533334843,
+      "ks_p_value": 1.3256488539225867e-46,
+      "ks_drift": 1
+    },
+    "global_active_power_lag_3": {
+      "psi": 0.07100819174195308,
+      "psi_drift": 0,
+      "ks_statistic": 0.1137751966888728,
+      "ks_p_value": 9.095095514490282e-47,
+      "ks_drift": 1
+    },
+    "global_active_power_lag_24": {
+      "psi": 0.07242322690299278,
+      "psi_drift": 0,
+      "ks_statistic": 0.11470620346894188,
+      "ks_p_value": 1.5678375848023212e-47,
+      "ks_drift": 1
+    },
+    "global_active_power_lag_48": {
+      "psi": 0.07104695699648836,
+      "psi_drift": 0,
+      "ks_statistic": 0.1162549831969653,
+      "ks_p_value": 8.151207682805193e-49,
+      "ks_drift": 1
+    },
+    "global_active_power_lag_168": {
+      "psi": 0.07057031397572577,
+      "psi_drift": 0,
+      "ks_statistic": 0.13437357412900527,
+      "ks_p_value": 3.912516332297422e-65,
+      "ks_drift": 1
+    },
+    "global_active_power_rollmean_3": {
+      "psi": 0.10135493346085707,
+      "psi_drift": 0,
+      "ks_statistic": 0.08945506705918416,
+      "ks_p_value": 4.779653407537619e-29,
+      "ks_drift": 1
+    },
+    "global_active_power_rollstd_3": {
+      "psi": 0.05215890695189365,
+      "psi_drift": 0,
+      "ks_statistic": 0.07362967523037345,
+      "ks_p_value": 8.277120017476464e-20,
+      "ks_drift": 1
+    },
+    "global_active_power_rollmean_6": {
+      "psi": 0.13029292749603402,
+      "psi_drift": 0,
+      "ks_statistic": 0.10065646400452088,
+      "ks_p_value": 1.1196861248665537e-36,
+      "ks_drift": 1
+    },
+    "global_active_power_rollstd_6": {
+      "psi": 0.13893921668091752,
+      "psi_drift": 0,
+      "ks_statistic": 0.127012975463752,
+      "ks_p_value": 3.239293305214496e-58,
+      "ks_drift": 1
+    },
+    "global_active_power_rollmean_24": {
+      "psi": 0.328815013052269,
+      "psi_drift": 1,
+      "ks_statistic": 0.1712207907297263,
+      "ks_p_value": 9.632603335344582e-106,
+      "ks_drift": 1
+    },
+    "global_active_power_rollstd_24": {
+      "psi": 0.5233182021708317,
+      "psi_drift": 1,
+      "ks_statistic": 0.3013370732964582,
+      "ks_p_value": 0.0,
+      "ks_drift": 1
+    }
+  },
+  "overall_drift": 1
+}

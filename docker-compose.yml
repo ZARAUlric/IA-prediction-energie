@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./monitoring:/app/monitoring
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python -m src.api.main
+    restart: unless-stopped
+
+  front:
+    build: .
+    ports:
+      - "7860:7860"
+    volumes:
+      - ./front:/app/front
+      - ./src:/app/src
+    working_dir: /app/front
+    command: python app.py
+    restart: unless-stopped
+    depends_on:
+      - api
+
+  mlflow:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/app/mlruns
+    command: mlflow ui --host 0.0.0.0
+    restart: unless-stopped
+
+volumes:
+  mlruns:
